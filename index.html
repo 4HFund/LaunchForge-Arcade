@@ -13,6 +13,7 @@
 <body>
   <div class="bg-glow bg-glow-one"></div>
   <div class="bg-glow bg-glow-two"></div>
+
   <main class="app-shell">
     <header class="topbar">
       <a class="brand" href="#" aria-label="ChurchBuilt LaunchForge Arcade home">
@@ -28,7 +29,23 @@
       </div>
     </header>
 
-    <section id="screen" class="game-card"></section>
+    <section id="screen" class="game-card">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">Interactive brand game</p>
+          <h1>LaunchForge Arcade</h1>
+          <p class="lead">Play 8 quick mini-games and unlock the ChurchBuilt service that best fits your next move.</p>
+          <div class="hero-actions">
+            <button class="primary-btn" data-action="start" type="button">Start Forging My Launch Kit</button>
+          </div>
+        </div>
+        <div class="forge-orb" aria-hidden="true">
+          <div class="orb-ring"></div>
+          <div class="orb-core">⚒</div>
+          <p>Websites • Branding • Video • Photos • Music • QR Promo</p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <template id="start-template">
@@ -38,7 +55,7 @@
         <h1>LaunchForge Arcade</h1>
         <p class="lead">Play 8 quick mini-games and unlock the ChurchBuilt service that best fits your next move.</p>
         <div class="hero-actions">
-          <button class="primary-btn" data-action="start">Start Forging My Launch Kit</button>
+          <button class="primary-btn" data-action="start" type="button">Start Forging My Launch Kit</button>
         </div>
       </div>
       <div class="forge-orb" aria-hidden="true">
@@ -49,6 +66,6 @@
     </div>
   </template>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=2" defer></script>
 </body>
 </html>
