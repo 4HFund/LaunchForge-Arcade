@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LaunchForge Arcade | ChurchBuilt</title>
+  <meta name="description" content="Play LaunchForge Arcade by ChurchBuilt and unlock a custom creative launch recommendation for your website, branding, video, photos, music, QR promo, or full launch package." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-glow bg-glow-one"></div>
+  <div class="bg-glow bg-glow-two"></div>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="ChurchBuilt LaunchForge Arcade home">
+        <span class="brand-mark">CB</span>
+        <span>
+          <strong>ChurchBuilt</strong>
+          <small>LaunchForge Arcade</small>
+        </span>
+      </a>
+      <div class="mini-status">
+        <span id="progressLabel">Ready to forge</span>
+        <div class="progress-track" aria-hidden="true"><div id="progressBar" class="progress-bar"></div></div>
+      </div>
+    </header>
+
+    <section id="screen" class="game-card"></section>
+  </main>
+
+  <template id="start-template">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Interactive brand game</p>
+        <h1>LaunchForge Arcade</h1>
+        <p class="lead">Play 8 quick mini-games and unlock the ChurchBuilt service that best fits your next move.</p>
+        <div class="hero-actions">
+          <button class="primary-btn" data-action="start">Start Forging My Launch Kit</button>
+        </div>
+      </div>
+      <div class="forge-orb" aria-hidden="true">
+        <div class="orb-ring"></div>
+        <div class="orb-core">⚒</div>
+        <p>Websites • Branding • Video • Photos • Music • QR Promo</p>
+      </div>
+    </div>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
