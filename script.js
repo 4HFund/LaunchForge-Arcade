@@ -1,42 +1,536 @@
-const CONFIG={calendlyUrl:"https://calendly.com/sidney-mozingo/15-min-video-discovery-call",leadEndpoint:"",businessEmail:""};
-const screen=document.getElementById("screen"),progressBar=document.getElementById("progressBar"),progressLabel=document.getElementById("progressLabel");
-const state={level:0,projectType:"",startingPoint:"",brandVibes:[],painPoints:[],pageBlocks:[],caughtTools:[],budgetRange:"",timeline:"",lead:{},scores:{basicLandingPage:0,customLandingPage:0,premiumWebsite:0,logoBrandKit:0,qrPromo:0,videoEditing:0,photography:0,customMusic:0,socialContent:0,ongoingSupport:0,fullCreativeLaunch:0}};
-const icons={"Small business":"🏪","Church or ministry":"⛪","Nonprofit":"🤝","Event or fundraiser":"🎪","Personal brand":"🎤","Product or service":"📦","Community project":"🌄","Messy idea that needs shaped":"🧩"};
-const levels=["Start","Mission Picker","Starting Point Scanner","Brand Vibe Smash","Fix the Broken Brand","Landing Page Tower","Content Catcher","Budget Bridge","Launch Timer","Unlock","Result"];
-const resultMap={
- basicLandingPage:{title:"Quick Launch Kit",service:"Basic Landing Page — $300",offer:"$50 off your first landing page",copy:"You do not need something complicated yet. You need a clean, simple place to send people that explains who you are, what you offer, and how to take the next step."},
- customLandingPage:{title:"Polished Presence Kit",service:"Custom Landing Page — $600",offer:"Free QR flyer included",copy:"Your brand has direction, but it needs to look more polished, organized, and trustworthy. A custom landing page can give people a clear reason to trust you and take action."},
- premiumWebsite:{title:"Full Foundation Kit",service:"Premium Website — $900",offer:"$100 off your premium website build",copy:"Your project needs a stronger online foundation with multiple pages, clear messaging, visuals, contact options, and a structure that helps people understand everything you offer."},
- logoBrandKit:{title:"Brand Glow-Up Kit",service:"Logo + Brand Kit — $249",offer:"Free social profile graphics included",copy:"Your biggest opportunity is visual clarity. A stronger logo, color palette, font direction, and basic brand kit can make everything you create feel more professional."},
- videoEditing:{title:"Story Builder Kit",service:"Video Editing / Promo Video Package",offer:"Free 15-second social cutdown with your first video project",copy:"Your brand does not just need information. It needs a story people can feel. A short promo video, highlight reel, promo edit, or social clip can help people understand your mission faster."},
- photography:{title:"Visual Upgrade Kit",service:"Photo Content Package",offer:"Free web-ready photo crop set",copy:"Your visuals need to work harder for you. Better photos can instantly make your website, flyers, social media, and promotions feel more real and professional."},
- customMusic:{title:"Soundtrack Moment Kit",service:"Custom Music / Jingle / Theme Song",offer:"Free short intro/outro version included",copy:"Your project has personality. A custom song, jingle, intro, or theme can make your brand, event, video series, podcast, or campaign more memorable."},
- qrPromo:{title:"Local Promo Kit",service:"QR Code Flyer — $39 or Business Card with QR Code — $29",offer:"Bundle flyer + QR business card and save",copy:"You need a simple way to move people from real life to action. QR flyers and cards can send people straight to your website, booking page, event page, donation page, or contact form."},
- ongoingSupport:{title:"Ongoing Partner Kit",service:"Ongoing Website Support — starting at $49/month",offer:"First month discounted with any website package",copy:"You do not just need a one-time project. You need a creative partner who can help keep your site, content, and digital presence updated."},
- fullCreativeLaunch:{title:"Full Creative Launch Kit",service:"Custom Creative Launch Bundle",offer:"Custom bundle discount",copy:"You need more than one piece. You need the full launch treatment: website, branding, visuals, video, music, QR promo, and clear messaging working together."}
+const CONFIG = {
+  calendlyUrl: "https://calendly.com/sidney-mozingo/15-min-video-discovery-call",
+  leadEndpoint: ""
 };
-function addScore(k,n=1){state.scores[k]=(state.scores[k]||0)+n}function esc(s=""){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}function setProgress(i,label){state.level=i;progressBar.style.width=Math.min(100,(i/9)*100)+"%";progressLabel.textContent=label||levels[i]}
-function wrap(i,badge,title,lead,body,actions=""){setProgress(i,badge);screen.innerHTML=`<div class="screen-inner"><div class="level-head"><div><p class="eyebrow">${esc(badge)}</p><h2>${title}</h2><p class="lead">${lead}</p></div><span class="level-badge">Level ${Math.min(i,8)} of 8</span></div>${body}${actions}</div>`}
-function start(){screen.innerHTML=document.getElementById("start-template").innerHTML;screen.querySelector("[data-action='start']").onclick=mission}document.addEventListener("click",e=>{if(e.target.matches("[data-action='start']"))mission()});
-function mission(){const opts=Object.keys(icons);wrap(1,"Mission Picker","Choose your mission.","What are you building right now?",`<div class="grid portal-grid">${opts.map(o=>`<button class="choice-card" data-v="${esc(o)}"><div class="portal-icon">${icons[o]}</div><b>${o}</b><span>Lock in your creative mission.</span></button>`).join("")}</div>`);screen.querySelectorAll(".choice-card").forEach(b=>b.onclick=()=>{state.projectType=b.dataset.v;scoreMission(state.projectType);startingPoint()})}
-function scoreMission(v){if(v==="Small business"){addScore("customLandingPage");addScore("logoBrandKit");addScore("photography")}if(v==="Church or ministry"){addScore("premiumWebsite");addScore("videoEditing");addScore("socialContent");addScore("ongoingSupport")}if(v==="Nonprofit"){addScore("customLandingPage");addScore("qrPromo");addScore("videoEditing")}if(v==="Event or fundraiser"){addScore("qrPromo",2);addScore("videoEditing");addScore("customMusic")}if(v==="Personal brand"){addScore("logoBrandKit");addScore("photography");addScore("videoEditing")}if(v==="Product or service"){addScore("customLandingPage",2);addScore("photography");addScore("qrPromo")}if(v==="Community project"){addScore("qrPromo");addScore("videoEditing");addScore("fullCreativeLaunch")}if(v.includes("Messy")){addScore("fullCreativeLaunch",3);addScore("ongoingSupport")}}
-function startingPoint(){const opts=["Starting from scratch","I have a website, but it needs work","I have a logo, but no real brand","I have photos/videos, but they are not polished","I need help promoting something soon","I have a lot of ideas, but no clear plan","I need someone to make this look professional","I already have something good, but I need ongoing help"];wrap(2,"Starting Point Scanner","Scan your starting point.","Where are you right now?",`<div class="scanner-wrap"><div class="scanner-line"></div><div class="grid">${opts.map(o=>`<button class="choice-card" data-v="${esc(o)}"><b>${o}</b><span>Tap to scan this starting point.</span></button>`).join("")}</div></div>`);screen.querySelectorAll(".choice-card").forEach(b=>b.onclick=()=>{state.startingPoint=b.dataset.v;scoreStarting(state.startingPoint);vibeSmash()})}
-function scoreStarting(v){if(v.includes("scratch")){addScore("basicLandingPage",2);addScore("logoBrandKit");addScore("fullCreativeLaunch")}if(v.includes("website")){addScore("customLandingPage",2);addScore("premiumWebsite");addScore("ongoingSupport")}if(v.includes("logo")){addScore("logoBrandKit",3)}if(v.includes("photos/videos")){addScore("photography",2);addScore("videoEditing",2)}if(v.includes("promoting")){addScore("qrPromo",2);addScore("videoEditing");addScore("socialContent")}if(v.includes("ideas")){addScore("fullCreativeLaunch",3);addScore("ongoingSupport")}if(v.includes("professional")){addScore("customLandingPage");addScore("photography");addScore("logoBrandKit")}if(v.includes("ongoing")){addScore("ongoingSupport",4)}}
-function vibeSmash(){const words=["Bold","Clean","Warm","Premium","Funny","Faith-based","Local","Creative","Professional","Modern","Family-friendly","Energetic","Trustworthy","Simple","Powerful","Hopeful","Friendly","High-end","Community-focused","Inspiring"];wrap(3,"Brand Vibe Smash","Tap your brand vibes.","You have 20 seconds. Tap the words that match how your brand should feel.",`<div class="meter-row"><span id="timer">20s</span><div class="energy-meter"><div id="energy" class="energy-fill"></div></div><span id="vibeCount">0 vibes</span></div><div id="arena" class="vibe-arena"></div>`,`<div class="footer-actions"><button class="primary-btn" id="finishVibes">Lock Vibes</button></div>`);const arena=document.getElementById("arena"),energy=document.getElementById("energy"),count=document.getElementById("vibeCount"),timer=document.getElementById("timer");words.forEach(w=>{const btn=document.createElement("button");btn.className="vibe-chip";btn.textContent=w;btn.style.left=Math.random()*75+5+"%";btn.style.top=Math.random()*78+5+"%";btn.onclick=()=>{if(state.brandVibes.includes(w))return;state.brandVibes.push(w);btn.classList.add("hit");energy.style.width=Math.min(100,state.brandVibes.length*7)+"%";count.textContent=state.brandVibes.length+" vibes";setTimeout(()=>btn.remove(),250)};arena.appendChild(btn)});let t=20;const int=setInterval(()=>{t--;timer.textContent=t+"s";if(t<=0){clearInterval(int);fixBrand()}},1000);document.getElementById("finishVibes").onclick=()=>{clearInterval(int);scoreVibes();fixBrand()}}
-function scoreVibes(){const v=state.brandVibes.join(" ");if(/Premium|High-end|Professional|Trustworthy/.test(v)){addScore("customLandingPage");addScore("premiumWebsite")}if(/Funny|Energetic|Creative|Bold/.test(v)){addScore("videoEditing");addScore("customMusic");addScore("socialContent")}if(/Warm|Friendly|Family|Hopeful|Faith/.test(v)){addScore("photography");addScore("videoEditing")}if(/Local|Community/.test(v)){addScore("qrPromo");addScore("photography")}}
-function fixBrand(){scoreVibes();const pieces=["Outdated website","No website","Weak logo","Blurry photos","No promo video","Confusing message","Weak social media","No clear call-to-action","No flyer or QR code","No custom content","No music or sound identity","Everything feels scattered"];wrap(4,"Fix the Broken Brand","Drag problems into the forge.","Pick the biggest issues you want ChurchBuilt to fix first.",`<div class="drag-layout"><div id="problemBin" class="problem-bin">${pieces.map(p=>`<div class="problem-piece" draggable="true" data-v="${esc(p)}">${p}</div>`).join("")}</div><div id="forge" class="forge-bin"><h3>🔥 The Forge</h3><p class="small">Drop your biggest problems here.</p><div id="forgeItems" class="forge-items"></div></div></div>`,`<div class="footer-actions"><button class="primary-btn" id="doneProblems">Forge These Problems</button></div>`);document.querySelectorAll(".problem-piece").forEach(p=>p.addEventListener("dragstart",e=>e.dataTransfer.setData("text/plain",p.dataset.v)));const forge=document.getElementById("forge");forge.ondragover=e=>{e.preventDefault();forge.classList.add("drag-over")};forge.ondragleave=()=>forge.classList.remove("drag-over");forge.ondrop=e=>{e.preventDefault();forge.classList.remove("drag-over");addProblem(e.dataTransfer.getData("text/plain"))};document.querySelectorAll(".problem-piece").forEach(p=>p.onclick=()=>addProblem(p.dataset.v));document.getElementById("doneProblems").onclick=()=>{scoreProblems();landingTower()}}
-function addProblem(v){if(!v||state.painPoints.includes(v))return;state.painPoints.push(v);document.getElementById("forgeItems").insertAdjacentHTML("beforeend",`<span class="tag">${esc(v)}</span>`)}
-function scoreProblems(){state.painPoints.forEach(v=>{if(v.includes("website")){addScore("customLandingPage",2);addScore("premiumWebsite",2)}if(v==="No website"){addScore("basicLandingPage",2)}if(v.includes("logo"))addScore("logoBrandKit",3);if(v.includes("photos"))addScore("photography",3);if(v.includes("video"))addScore("videoEditing",3);if(v.includes("message")||v.includes("call-to-action")){addScore("customLandingPage",2);addScore("fullCreativeLaunch")}if(v.includes("social")){addScore("socialContent",3);addScore("videoEditing")}if(v.includes("flyer")||v.includes("QR"))addScore("qrPromo",3);if(v.includes("music"))addScore("customMusic",3);if(v.includes("scattered")){addScore("fullCreativeLaunch",4);addScore("ongoingSupport",2)}})}
-function landingTower(){const blocks=["Hero section","About section","Services","Photos","Promo video","Testimonials","Event info","Donation button","Booking button","Contact form","Social links","FAQ","Pricing","Custom music/audio","QR code","Newsletter signup","Location/map","Volunteer/signup form"];wrap(5,"Landing Page Tower","Build your online foundation.","Choose the blocks your page or website should include.",`<div class="tower-stage"><div class="block-bank">${blocks.map(b=>`<button class="mini-card" data-v="${esc(b)}"><b>${b}</b></button>`).join("")}</div><div id="tower" class="tower"></div></div>`,`<div class="footer-actions"><button class="primary-btn" id="doneTower">Lock Page Tower</button></div>`);document.querySelectorAll(".mini-card").forEach(b=>b.onclick=()=>{const v=b.dataset.v;if(state.pageBlocks.includes(v))return;state.pageBlocks.push(v);b.classList.add("selected");document.getElementById("tower").insertAdjacentHTML("beforeend",`<div class="tower-block">${esc(v)}</div>`) });document.getElementById("doneTower").onclick=()=>{scoreTower();contentCatcher()}}
-function scoreTower(){const n=state.pageBlocks.length;if(n<=5)addScore("basicLandingPage",2);if(n>=6&&n<=9)addScore("customLandingPage",3);if(n>=10){addScore("premiumWebsite",3);addScore("fullCreativeLaunch",2)}state.pageBlocks.forEach(v=>{if(v.includes("video"))addScore("videoEditing",2);if(v.includes("Photos"))addScore("photography",2);if(v.includes("music"))addScore("customMusic",2);if(v.includes("QR"))addScore("qrPromo",2);if(v.includes("Newsletter"))addScore("socialContent");if(v.includes("Booking")||v.includes("Donation"))addScore("customLandingPage")})}
-function contentCatcher(){wrap(6,"Content Catcher","Catch your creative tools.","Use the buttons or keyboard arrows to move the bucket. Catch what your brand needs most.",`<div id="catchStage" class="catcher-stage"><div id="catcher" class="catcher">Launch Kit</div></div><div class="catcher-controls"><button class="secondary-btn" id="leftBtn">← Left</button><button class="secondary-btn" id="rightBtn">Right →</button></div><p class="small">Caught: <span id="caughtList">nothing yet</span></p>`,`<div class="footer-actions"><button class="primary-btn" id="doneCatch">Finish Catching</button></div>`);const tools=["Website","Logo","Brand kit","Photos","Video","Music","Jingle","QR flyer","Business card","Social posts","Event promo","Monthly updates","Email signup","Booking link","Donation link"],stage=document.getElementById("catchStage"),catcher=document.getElementById("catcher"),list=document.getElementById("caughtList");let x=50,live=true;function move(d){x=Math.max(5,Math.min(85,x+d));catcher.style.left=x+"%"}document.getElementById("leftBtn").onclick=()=>move(-12);document.getElementById("rightBtn").onclick=()=>move(12);document.onkeydown=e=>{if(e.key==="ArrowLeft")move(-8);if(e.key==="ArrowRight")move(8)};const spawn=setInterval(()=>{if(!live)return;const item=document.createElement("div");item.className="falling-item";item.textContent=tools[Math.floor(Math.random()*tools.length)];item.style.left=Math.random()*82+5+"%";stage.appendChild(item);let y=-40;const fall=setInterval(()=>{y+=5;item.style.top=y+"px";const ix=parseFloat(item.style.left),hit=y>310&&Math.abs(ix-x)<13;if(hit){catchTool(item.textContent);item.remove();clearInterval(fall)}if(y>430){item.remove();clearInterval(fall)}},45)},520);function catchTool(v){if(!state.caughtTools.includes(v))state.caughtTools.push(v);list.textContent=state.caughtTools.join(", ")}setTimeout(()=>{live=false;clearInterval(spawn)},16000);document.getElementById("doneCatch").onclick=()=>{live=false;clearInterval(spawn);scoreCaught();budgetBridge()}}
-function scoreCaught(){state.caughtTools.forEach(v=>{if(v==="Website"){addScore("basicLandingPage");addScore("customLandingPage",2)}if(v==="Logo"||v==="Brand kit")addScore("logoBrandKit",3);if(v==="Photos")addScore("photography",3);if(v==="Video")addScore("videoEditing",3);if(v==="Music"||v==="Jingle")addScore("customMusic",3);if(v.includes("QR")||v.includes("Business"))addScore("qrPromo",3);if(v.includes("Social")||v.includes("Email"))addScore("socialContent",2);if(v.includes("Monthly"))addScore("ongoingSupport",4);if(v.includes("Event"))addScore("qrPromo",2)})}
-function budgetBridge(){const opts=["Under $100","$100–$250","$250–$500","$500–$900","$900+","I need payments","I need a discount","I am not sure yet"];wrap(7,"Budget Bridge","Build your bridge from idea to launch.","What starting point feels realistic right now?",`<div class="grid">${opts.map(o=>`<button class="choice-card" data-v="${esc(o)}"><b>${o}</b><span>This helps us recommend something realistic.</span></button>`).join("")}</div><div class="bridge" id="bridge"><span class="bridge-point">Idea</span><span class="bridge-point">Launch</span></div>`);screen.querySelectorAll(".choice-card").forEach(b=>b.onclick=()=>{state.budgetRange=b.dataset.v;document.getElementById("bridge").insertAdjacentHTML("beforeend",`<div class="plank">${esc(state.budgetRange)}</div>`);scoreBudget(state.budgetRange);setTimeout(launchTimer,450)})}
-function scoreBudget(v){if(v.includes("Under")){addScore("qrPromo",3);addScore("logoBrandKit")}if(v.includes("100")){addScore("logoBrandKit",2);addScore("videoEditing");addScore("customMusic")}if(v.includes("250")){addScore("basicLandingPage",3);addScore("logoBrandKit",2)}if(v.includes("500")){addScore("customLandingPage",3);addScore("premiumWebsite",1);addScore("videoEditing")}if(v.includes("900+")){addScore("premiumWebsite",3);addScore("fullCreativeLaunch",3)}if(v.includes("payments")||v.includes("discount")){addScore("basicLandingPage");addScore("customLandingPage");addScore("fullCreativeLaunch")}if(v.includes("not sure")){addScore("ongoingSupport");addScore("fullCreativeLaunch")}}
-function launchTimer(){const opts=["ASAP","Within 2 weeks","Within a month","Within 2–3 months","I am just exploring"];wrap(8,"Launch Timer","Stop the launch timer.","Tap the button to lock in how soon you want to improve or launch this.",`<div class="timer-game"><div class="dial"><div id="dialValue" class="dial-value">ASAP</div></div><button class="primary-btn" id="stopDial">Stop Timer</button></div>`);let i=0;const dv=document.getElementById("dialValue"),int=setInterval(()=>{i=(i+1)%opts.length;dv.textContent=opts[i]},430);document.getElementById("stopDial").onclick=()=>{clearInterval(int);state.timeline=dv.textContent;if(state.timeline==="ASAP"||state.timeline.includes("2 weeks")){addScore("fullCreativeLaunch");addScore("customLandingPage")}unlock()}}
-function unlock(){wrap(9,"Blueprint Ready","Your Launch Kit has been forged.","Enter your info to unlock your custom ChurchBuilt recommendation and discount option.",`<form id="leadForm" class="form-grid"><div class="field"><label>Name</label><input name="name" required placeholder="Your name"></div><div class="field"><label>Email</label><input name="email" type="email" required placeholder="you@example.com"></div><div class="field"><label>Business / organization</label><input name="organization" required placeholder="Brand name"></div><div class="field"><label>Website or social link</label><input name="website" placeholder="Optional"></div><div class="field"><label>Phone</label><input name="phone" placeholder="Optional"></div><div class="field full"><label>Anything you want us to know?</label><textarea name="notes" rows="4" placeholder="Tell us about your project..."></textarea></div><div class="field full"><button class="primary-btn" type="submit">Unlock My Launch Kit</button><p class="small">No spam. Just your result, recommended next step, and a helpful offer if you want ChurchBuilt to help bring it to life.</p></div></form>`);document.getElementById("leadForm").onsubmit=submitLead}
-async function submitLead(e){e.preventDefault();const fd=new FormData(e.target);state.lead=Object.fromEntries(fd.entries());const rec=getTop();const payload={...state.lead,projectType:state.projectType,startingPoint:state.startingPoint,brandVibes:state.brandVibes,painPoints:state.painPoints,pageBlocks:state.pageBlocks,caughtTools:state.caughtTools,budgetRange:state.budgetRange,timeline:state.timeline,topRecommendation:resultMap[rec.key].title,recommendedService:resultMap[rec.key].service,unlockedOffer:resultMap[rec.key].offer,scores:state.scores,createdAt:new Date().toISOString()};localStorage.setItem("launchforge_latest_lead",JSON.stringify(payload));const all=JSON.parse(localStorage.getItem("launchforge_leads")||"[]");all.push(payload);localStorage.setItem("launchforge_leads",JSON.stringify(all));if(CONFIG.leadEndpoint){try{await fetch(CONFIG.leadEndpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)})}catch(err){console.warn("Lead endpoint failed",err)}}result(payload)}
-function getTop(){const entries=Object.entries(state.scores).sort((a,b)=>b[1]-a[1]);return{key:entries[0][0],score:entries[0][1],second:entries[1]?.[0]}}
-function result(payload){const top=getTop(),r=resultMap[top.key],second=resultMap[top.second]||resultMap.fullCreativeLaunch;setProgress(10,"Launch Kit Forged");screen.innerHTML=`<div class="screen-inner"><p class="eyebrow">Result unlocked</p><h2>Your ${esc(r.title)} has been forged.</h2><p class="lead">${esc(r.copy)}</p><div class="result-grid"><div class="result-card"><h3>Your Best ChurchBuilt Match</h3><div class="score-list"><div class="score-row"><span>Recommended service</span><strong>${esc(r.service)}</strong></div><div class="score-row"><span>Unlocked offer</span><strong>${esc(r.offer)}</strong></div><div class="score-row"><span>Secondary fit</span><strong>${esc(second.title)}</strong></div><div class="score-row"><span>Mission</span><strong>${esc(state.projectType)}</strong></div><div class="score-row"><span>Budget</span><strong>${esc(state.budgetRange)}</strong></div><div class="score-row"><span>Timeline</span><strong>${esc(state.timeline)}</strong></div></div><div class="footer-actions"><a class="primary-btn" href="${CONFIG.calendlyUrl}" target="_blank" rel="noopener">Book My Free Discovery Call</a><button class="secondary-btn" id="downloadLead">Download Result</button></div></div><aside class="result-card"><h3>Your Launch Kit Inventory</h3><p class="small"><strong>Vibe:</strong> ${esc(state.brandVibes.slice(0,6).join(", ")||"Not selected")}</p><p class="small"><strong>Problems:</strong> ${esc(state.painPoints.join(", ")||"Not selected")}</p><p class="small"><strong>Tools caught:</strong> ${esc(state.caughtTools.join(", ")||"Not selected")}</p><div class="notice">ChurchBuilt is your creative launch partner for websites, branding, video, photos, custom music, QR promo, and ongoing support.</div></aside></div></div>`;document.getElementById("downloadLead").onclick=()=>download(JSON.stringify(payload,null,2),"launchforge-result.json","application/json")}
-function download(content,file,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type}));a.download=file;a.click();URL.revokeObjectURL(a.href)}
-start();
+
+const $ = (selector) => document.querySelector(selector);
+const screen = $("#screen");
+const progressBar = $("#progressBar");
+const hudLabel = $("#hudLabel");
+const levelCount = $("#levelCount");
+
+const state = {
+  mission: "",
+  startingPoint: "",
+  vibes: [],
+  problems: [],
+  blocks: [],
+  tools: [],
+  budget: "",
+  timeline: "",
+  lead: {},
+  scores: {
+    basicLandingPage: 0,
+    customLandingPage: 0,
+    premiumWebsite: 0,
+    logoBrandKit: 0,
+    qrPromo: 0,
+    videoEditing: 0,
+    photography: 0,
+    customMusic: 0,
+    socialContent: 0,
+    ongoingSupport: 0,
+    fullCreativeLaunch: 0
+  }
+};
+
+const results = {
+  basicLandingPage: {
+    title: "Quick Launch Kit",
+    service: "Basic Landing Page — $300",
+    offer: "$50 off your first landing page",
+    copy: "You need a sharp, simple digital home base. One page. Clear message. Strong call-to-action. No clutter."
+  },
+  customLandingPage: {
+    title: "Polished Presence Kit",
+    service: "Custom Landing Page — $600",
+    offer: "Free QR flyer included",
+    copy: "Your brand needs a stronger first impression. A custom landing page gives you structure, clarity, and a professional place to send people."
+  },
+  premiumWebsite: {
+    title: "Full Foundation Kit",
+    service: "Premium Website — $900",
+    offer: "$100 off your premium website build",
+    copy: "You need more than a landing page. You need a real online foundation with multiple sections, clean navigation, and a full brand presence."
+  },
+  logoBrandKit: {
+    title: "Brand Glow-Up Kit",
+    service: "Logo + Brand Kit — $249",
+    offer: "Free social profile graphics included",
+    copy: "Your visual identity needs to look intentional. A better logo, colors, type direction, and brand kit will make everything feel more professional."
+  },
+  qrPromo: {
+    title: "Street-Level Promo Kit",
+    service: "QR Flyer / QR Business Card",
+    offer: "Bundle flyer + QR card and save",
+    copy: "You need a fast way to turn attention into action. QR flyers and cards help move people from real life to your website, event, booking link, or form."
+  },
+  videoEditing: {
+    title: "Story Builder Kit",
+    service: "Video Editing / Promo Video Package",
+    offer: "Free 15-second social cutdown with your first video project",
+    copy: "Your brand needs motion, emotion, and a story people can feel. Video can explain the mission faster than a wall of text."
+  },
+  photography: {
+    title: "Visual Upgrade Kit",
+    service: "Photo Content Package",
+    offer: "Free web-ready photo crop set",
+    copy: "Your visuals need to carry more trust. Better photos instantly make your website, social posts, flyers, and promotions feel real and professional."
+  },
+  customMusic: {
+    title: "Soundtrack Kit",
+    service: "Custom Music / Jingle / Theme Song",
+    offer: "Free short intro/outro version included",
+    copy: "Your project has a sound. A custom jingle, theme, intro, or campaign song can make your brand more memorable."
+  },
+  socialContent: {
+    title: "Content Momentum Kit",
+    service: "Social Content / Campaign Support",
+    offer: "Free starter content direction sheet",
+    copy: "Your brand needs consistency. Social content gives people a reason to keep seeing, remembering, and trusting what you do."
+  },
+  ongoingSupport: {
+    title: "Ongoing Partner Kit",
+    service: "Ongoing Website Support — starting at $49/month",
+    offer: "First month discounted with any website package",
+    copy: "You need a creative partner, not another abandoned project. Ongoing support keeps your site and content updated."
+  },
+  fullCreativeLaunch: {
+    title: "Full Creative Launch Kit",
+    service: "Custom Creative Launch Bundle",
+    offer: "Custom bundle discount",
+    copy: "Your project needs the full treatment: website, branding, visuals, video, music, QR promo, and clear messaging working together."
+  }
+};
+
+function add(key, amount = 1) {
+  state.scores[key] = (state.scores[key] || 0) + amount;
+}
+
+function safe(value = "") {
+  return String(value).replace(/[&<>"']/g, (match) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[match]));
+}
+
+function updateHud(level, label) {
+  const percent = Math.min(100, (level / 8) * 100);
+  progressBar.style.width = `${percent}%`;
+  hudLabel.textContent = label;
+  levelCount.textContent = `${String(Math.min(level, 8)).padStart(2, "0")} / 08`;
+}
+
+function scene(level, label, title, copy, body, actions = "") {
+  updateHud(level, label.toUpperCase());
+  screen.innerHTML = `
+    <div class="scene">
+      <div class="level-top">
+        <div>
+          <p class="kicker">${safe(label)}</p>
+          <h1 class="level-title">${title}</h1>
+          <p class="level-copy">${copy}</p>
+        </div>
+        <span class="level-pill">Level ${Math.min(level, 8)} / 8</span>
+      </div>
+      ${body}
+      ${actions}
+    </div>
+  `;
+}
+
+function home() {
+  updateHud(0, "SYSTEM READY");
+  screen.innerHTML = `
+    <div class="scene hero">
+      <div>
+        <p class="kicker">ChurchBuilt presents</p>
+        <h1 class="title">LaunchForge Arcade</h1>
+        <p class="subtitle">A cinematic 8-level brand intelligence game that finds the ChurchBuilt service your project needs most: websites, branding, video, photos, music, QR promo, content, or a full creative launch.</p>
+        <div class="button-row">
+          <button class="btn btn-primary" type="button" id="startGame">Start the Mission</button>
+          <button class="btn btn-dark" type="button" id="skipToLead">I already know I need help</button>
+        </div>
+      </div>
+      <aside class="poster-card">
+        <div class="poster-logo">LF</div>
+        <div>
+          <h2>Forge the brand. Find the move.</h2>
+          <p>Built for churches, nonprofits, small businesses, entrepreneurs, events, and local projects.</p>
+        </div>
+      </aside>
+    </div>
+  `;
+  $("#startGame").onclick = mission;
+  $("#skipToLead").onclick = unlock;
+}
+
+function cards(items, columns = "") {
+  return `<div class="grid ${columns}">${items.map(item => `
+    <button class="card" type="button" data-value="${safe(item.value)}">
+      <div class="icon">${item.icon || "✦"}</div>
+      <b>${safe(item.label)}</b>
+      <span>${safe(item.copy || "Tap to lock this in.")}</span>
+    </button>
+  `).join("")}</div>`;
+}
+
+function mission() {
+  const items = [
+    { label: "Small Business", value: "Small Business", icon: "🏪", copy: "Local offer, service, shop, or startup." },
+    { label: "Church / Ministry", value: "Church / Ministry", icon: "⛪", copy: "A mission that needs clarity and reach." },
+    { label: "Nonprofit", value: "Nonprofit", icon: "🤝", copy: "Cause-driven work that needs trust." },
+    { label: "Event / Fundraiser", value: "Event / Fundraiser", icon: "🎟️", copy: "Something coming up that needs attention." },
+    { label: "Personal Brand", value: "Personal Brand", icon: "🎤", copy: "You are the face of the message." },
+    { label: "Product / Service", value: "Product / Service", icon: "📦", copy: "An offer that needs a cleaner launch." },
+    { label: "Community Project", value: "Community Project", icon: "🌄", copy: "Local impact that needs promotion." },
+    { label: "Messy Idea", value: "Messy Idea", icon: "🧩", copy: "The vision exists, but the pieces need shaped." }
+  ];
+  scene(1, "Mission Picker", "Choose the mission", "Every project has a different launch path. Pick what you are building and the system will begin scoring your best move.", cards(items));
+  document.querySelectorAll(".card").forEach(card => card.onclick = () => {
+    state.mission = card.dataset.value;
+    if (state.mission === "Small Business") { add("customLandingPage", 2); add("logoBrandKit"); add("photography"); }
+    if (state.mission === "Church / Ministry") { add("premiumWebsite"); add("videoEditing"); add("socialContent"); add("ongoingSupport", 2); }
+    if (state.mission === "Nonprofit") { add("customLandingPage"); add("qrPromo"); add("videoEditing"); }
+    if (state.mission === "Event / Fundraiser") { add("qrPromo", 3); add("videoEditing", 2); add("customMusic"); }
+    if (state.mission === "Personal Brand") { add("logoBrandKit", 2); add("photography", 2); add("videoEditing"); }
+    if (state.mission === "Product / Service") { add("customLandingPage", 2); add("photography"); add("qrPromo"); }
+    if (state.mission === "Community Project") { add("qrPromo", 2); add("videoEditing"); add("fullCreativeLaunch"); }
+    if (state.mission === "Messy Idea") { add("fullCreativeLaunch", 4); add("ongoingSupport", 2); }
+    startingPoint();
+  });
+}
+
+function startingPoint() {
+  const items = [
+    { label: "Starting From Scratch", value: "Starting From Scratch", icon: "🧱", copy: "No real online presence yet." },
+    { label: "Website Needs Work", value: "Website Needs Work", icon: "🕸️", copy: "It exists, but it does not impress." },
+    { label: "Logo But No Brand", value: "Logo But No Brand", icon: "🎯", copy: "The identity is incomplete." },
+    { label: "Content Is Rough", value: "Content Is Rough", icon: "🎬", copy: "Photos or videos need polish." },
+    { label: "Promoting Soon", value: "Promoting Soon", icon: "🚨", copy: "You need momentum fast." },
+    { label: "Too Many Ideas", value: "Too Many Ideas", icon: "🧠", copy: "The message needs organized." },
+    { label: "Needs Professional Look", value: "Needs Professional Look", icon: "💼", copy: "You need credibility fast." },
+    { label: "Need Ongoing Help", value: "Need Ongoing Help", icon: "🔁", copy: "You need a partner after launch." }
+  ];
+  scene(2, "Starting Point Scanner", "Scan the starting point", "Where are you right now? This tells ChurchBuilt whether you need a starter build, a polish pass, a content push, or a full creative system.", cards(items));
+  document.querySelectorAll(".card").forEach(card => card.onclick = () => {
+    state.startingPoint = card.dataset.value;
+    const v = state.startingPoint;
+    if (v.includes("Scratch")) { add("basicLandingPage", 3); add("logoBrandKit"); add("fullCreativeLaunch"); }
+    if (v.includes("Website")) { add("customLandingPage", 3); add("premiumWebsite", 2); add("ongoingSupport"); }
+    if (v.includes("Logo")) add("logoBrandKit", 4);
+    if (v.includes("Content")) { add("photography", 2); add("videoEditing", 2); }
+    if (v.includes("Promoting")) { add("qrPromo", 3); add("videoEditing"); add("socialContent"); }
+    if (v.includes("Ideas")) { add("fullCreativeLaunch", 4); add("ongoingSupport", 2); }
+    if (v.includes("Professional")) { add("customLandingPage", 2); add("photography"); add("logoBrandKit"); }
+    if (v.includes("Ongoing")) add("ongoingSupport", 5);
+    vibeSmash();
+  });
+}
+
+function vibeSmash() {
+  const words = ["Bold", "Clean", "Warm", "Premium", "Funny", "Faith-Based", "Local", "Creative", "Professional", "Modern", "Family-Friendly", "Energetic", "Trustworthy", "Simple", "Powerful", "Hopeful", "Friendly", "High-End", "Community", "Inspiring"];
+  scene(3, "Brand Vibe Smash", "Tap the signal words", "Tap the vibes that match how your brand should feel. This builds your creative direction and influences your recommendation.", `
+    <div class="meter"><span id="timeLeft">20 SEC</span><div class="meter-bar"><i id="energy"></i></div><span id="vibeTotal">0 LOCKED</span></div>
+    <div class="arena" id="arena"></div>
+  `, `<div class="button-row"><button class="btn btn-primary" type="button" id="lockVibes">Lock Vibes</button></div>`);
+  const arena = $("#arena");
+  words.forEach((word, index) => {
+    const button = document.createElement("button");
+    button.className = "vibe";
+    button.type = "button";
+    button.textContent = word;
+    button.style.left = `${6 + Math.random() * 75}%`;
+    button.style.top = `${7 + Math.random() * 74}%`;
+    button.style.animationDelay = `${index * .08}s`;
+    button.onclick = () => {
+      if (state.vibes.includes(word)) return;
+      state.vibes.push(word);
+      button.classList.add("hit");
+      $("#energy").style.width = `${Math.min(100, state.vibes.length * 7)}%`;
+      $("#vibeTotal").textContent = `${state.vibes.length} LOCKED`;
+      setTimeout(() => button.remove(), 220);
+    };
+    arena.appendChild(button);
+  });
+  let time = 20;
+  const timer = setInterval(() => {
+    time -= 1;
+    const el = $("#timeLeft");
+    if (el) el.textContent = `${time} SEC`;
+    if (time <= 0) { clearInterval(timer); scoreVibes(); fixBrand(); }
+  }, 1000);
+  $("#lockVibes").onclick = () => { clearInterval(timer); scoreVibes(); fixBrand(); };
+}
+
+function scoreVibes() {
+  const v = state.vibes.join(" ");
+  if (/Premium|High-End|Professional|Trustworthy|Clean|Modern/.test(v)) { add("customLandingPage", 2); add("premiumWebsite"); }
+  if (/Funny|Energetic|Creative|Bold|Powerful/.test(v)) { add("videoEditing", 2); add("customMusic"); add("socialContent"); }
+  if (/Warm|Friendly|Family|Hopeful|Faith/.test(v)) { add("photography", 2); add("videoEditing"); }
+  if (/Local|Community/.test(v)) { add("qrPromo", 2); add("photography"); }
+}
+
+function fixBrand() {
+  const problems = ["Outdated Website", "No Website", "Weak Logo", "Blurry Photos", "No Promo Video", "Confusing Message", "Weak Social Media", "No Clear CTA", "No Flyer or QR Code", "No Custom Content", "No Music Identity", "Everything Feels Scattered"];
+  scene(4, "Fix the Broken Brand", "Throw problems into the forge", "Tap every broken piece you want fixed first. This is where the game finds the real money problem.", `
+    <div class="forge-layout">
+      <div class="bin problem-grid">${problems.map(p => `<button class="chip" type="button" data-value="${safe(p)}">${safe(p)}</button>`).join("")}</div>
+      <aside class="bin forge"><div><h3>The Forge</h3><p class="level-copy">Selected problems melt down into your launch strategy.</p><div class="tags" id="problemTags"></div></div></aside>
+    </div>
+  `, `<div class="button-row"><button class="btn btn-primary" type="button" id="nextProblems">Forge the Fix</button></div>`);
+  document.querySelectorAll(".chip").forEach(chip => chip.onclick = () => {
+    const value = chip.dataset.value;
+    if (state.problems.includes(value)) return;
+    state.problems.push(value);
+    chip.classList.add("selected");
+    $("#problemTags").insertAdjacentHTML("beforeend", `<span class="tag">${safe(value)}</span>`);
+  });
+  $("#nextProblems").onclick = () => { scoreProblems(); landingTower(); };
+}
+
+function scoreProblems() {
+  state.problems.forEach(v => {
+    if (v.includes("Website")) { add("customLandingPage", 3); add("premiumWebsite", 2); }
+    if (v === "No Website") add("basicLandingPage", 3);
+    if (v.includes("Logo")) add("logoBrandKit", 4);
+    if (v.includes("Photos")) add("photography", 4);
+    if (v.includes("Video")) add("videoEditing", 4);
+    if (v.includes("Message") || v.includes("CTA")) { add("customLandingPage", 2); add("fullCreativeLaunch", 2); }
+    if (v.includes("Social")) { add("socialContent", 3); add("videoEditing"); }
+    if (v.includes("QR") || v.includes("Flyer")) add("qrPromo", 4);
+    if (v.includes("Music")) add("customMusic", 4);
+    if (v.includes("Scattered")) { add("fullCreativeLaunch", 5); add("ongoingSupport", 2); }
+  });
+}
+
+function landingTower() {
+  const blocks = ["Hero", "About", "Services", "Photos", "Promo Video", "Testimonials", "Event Info", "Donation", "Booking", "Contact Form", "Social Links", "FAQ", "Pricing", "Custom Audio", "QR Code", "Newsletter", "Location Map", "Volunteer Form"];
+  scene(5, "Landing Page Tower", "Build the digital foundation", "Choose what your online presence needs. The taller the build, the stronger the case for a bigger package.", `
+    <div class="tower-layout">
+      <div class="tower-bank">${blocks.map(b => `<button class="block" type="button" data-value="${safe(b)}">${safe(b)}</button>`).join("")}</div>
+      <aside class="tower-stack" id="tower"></aside>
+    </div>
+  `, `<div class="button-row"><button class="btn btn-primary" type="button" id="nextTower">Lock the Build</button></div>`);
+  document.querySelectorAll(".block").forEach(block => block.onclick = () => {
+    const value = block.dataset.value;
+    if (state.blocks.includes(value)) return;
+    state.blocks.push(value);
+    block.classList.add("selected");
+    $("#tower").insertAdjacentHTML("beforeend", `<div class="tower-piece">${safe(value)}</div>`);
+  });
+  $("#nextTower").onclick = () => { scoreBlocks(); contentCatcher(); };
+}
+
+function scoreBlocks() {
+  const n = state.blocks.length;
+  if (n <= 5) add("basicLandingPage", 2);
+  if (n >= 6 && n <= 9) add("customLandingPage", 4);
+  if (n >= 10) { add("premiumWebsite", 4); add("fullCreativeLaunch", 2); }
+  state.blocks.forEach(v => {
+    if (v.includes("Video")) add("videoEditing", 3);
+    if (v.includes("Photos")) add("photography", 3);
+    if (v.includes("Audio")) add("customMusic", 3);
+    if (v.includes("QR")) add("qrPromo", 3);
+    if (v.includes("Newsletter") || v.includes("Social")) add("socialContent", 2);
+  });
+}
+
+function contentCatcher() {
+  scene(6, "Content Catcher", "Catch the launch tools", "Move the bucket and catch the services you care about. This makes the game feel playful while still collecting buying intent.", `
+    <div class="catch-stage" id="catchStage"><div class="catcher" id="catcher">LAUNCH KIT</div></div>
+    <div class="button-row"><button class="btn btn-dark" type="button" id="left">← Left</button><button class="btn btn-dark" type="button" id="right">Right →</button><button class="btn btn-primary" type="button" id="nextCatch">Finish Round</button></div>
+    <p class="level-copy">Caught: <span id="caught">nothing yet</span></p>
+  `);
+  const tools = ["Website", "Logo", "Brand Kit", "Photos", "Video", "Music", "Jingle", "QR Flyer", "Business Card", "Social Posts", "Event Promo", "Monthly Updates", "Email Signup", "Booking Link", "Donation Link"];
+  const stage = $("#catchStage");
+  let x = 50;
+  let active = true;
+  function move(amount) {
+    x = Math.max(7, Math.min(83, x + amount));
+    $("#catcher").style.left = `${x}%`;
+  }
+  $("#left").onclick = () => move(-12);
+  $("#right").onclick = () => move(12);
+  document.onkeydown = (e) => { if (e.key === "ArrowLeft") move(-9); if (e.key === "ArrowRight") move(9); };
+  function caught(value) {
+    if (!state.tools.includes(value)) state.tools.push(value);
+    $("#caught").textContent = state.tools.join(", ");
+  }
+  const spawner = setInterval(() => {
+    if (!active) return;
+    const item = document.createElement("div");
+    item.className = "fall";
+    item.textContent = tools[Math.floor(Math.random() * tools.length)];
+    item.style.left = `${8 + Math.random() * 78}%`;
+    stage.appendChild(item);
+    let y = -40;
+    const faller = setInterval(() => {
+      y += 6;
+      item.style.top = `${y}px`;
+      const itemX = parseFloat(item.style.left);
+      if (y > 315 && Math.abs(itemX - x) < 14) {
+        caught(item.textContent);
+        item.remove();
+        clearInterval(faller);
+      }
+      if (y > 455) { item.remove(); clearInterval(faller); }
+    }, 42);
+  }, 520);
+  setTimeout(() => { active = false; clearInterval(spawner); }, 15000);
+  $("#nextCatch").onclick = () => { active = false; clearInterval(spawner); scoreTools(); budgetBridge(); };
+}
+
+function scoreTools() {
+  state.tools.forEach(v => {
+    if (v === "Website") { add("basicLandingPage"); add("customLandingPage", 3); }
+    if (v === "Logo" || v === "Brand Kit") add("logoBrandKit", 4);
+    if (v === "Photos") add("photography", 4);
+    if (v === "Video") add("videoEditing", 4);
+    if (v === "Music" || v === "Jingle") add("customMusic", 4);
+    if (v.includes("QR") || v.includes("Business")) add("qrPromo", 4);
+    if (v.includes("Social") || v.includes("Email")) add("socialContent", 3);
+    if (v.includes("Monthly")) add("ongoingSupport", 5);
+    if (v.includes("Event")) add("qrPromo", 2);
+  });
+}
+
+function budgetBridge() {
+  const items = ["Under $100", "$100–$250", "$250–$500", "$500–$900", "$900+", "I need payments", "I need a discount", "Not sure yet"].map(x => ({ label: x, value: x, icon: "▰", copy: "Select the starting point that feels realistic." }));
+  scene(7, "Budget Bridge", "Choose the launch runway", "This keeps the recommendation realistic. We are not trying to sell everyone the biggest thing. We are finding the right first move.", `<div class="bridge-grid">${items.map(item => `<button class="card" type="button" data-value="${safe(item.value)}"><div class="icon">${item.icon}</div><b>${safe(item.label)}</b><span>${safe(item.copy)}</span></button>`).join("")}</div><div class="bridge-road" id="road"><strong>IDEA</strong><strong>LAUNCH</strong></div>`);
+  document.querySelectorAll(".card").forEach(card => card.onclick = () => {
+    state.budget = card.dataset.value;
+    $("#road").insertAdjacentHTML("beforeend", `<div class="plank">${safe(state.budget)}</div>`);
+    if (state.budget.includes("Under")) { add("qrPromo", 4); add("logoBrandKit"); }
+    if (state.budget.includes("100")) { add("logoBrandKit", 2); add("videoEditing"); add("customMusic"); }
+    if (state.budget.includes("250")) { add("basicLandingPage", 4); add("logoBrandKit", 2); }
+    if (state.budget.includes("500")) { add("customLandingPage", 4); add("premiumWebsite"); add("videoEditing"); }
+    if (state.budget.includes("900+")) { add("premiumWebsite", 4); add("fullCreativeLaunch", 4); }
+    if (state.budget.includes("payments") || state.budget.includes("discount")) { add("basicLandingPage"); add("customLandingPage"); add("fullCreativeLaunch"); }
+    setTimeout(launchTimer, 500);
+  });
+}
+
+function launchTimer() {
+  const options = ["ASAP", "2 Weeks", "1 Month", "2–3 Months", "Just Exploring"];
+  scene(8, "Launch Timer", "Stop the clock", "Lock in your urgency. Hot leads need fast action. Explorers need the right starter path.", `
+    <div class="dial-wrap"><div class="dial"><div id="dialValue" class="dial-value">ASAP</div></div><button class="btn btn-primary" type="button" id="stopTimer">Stop Timer</button></div>
+  `);
+  let i = 0;
+  const timer = setInterval(() => {
+    i = (i + 1) % options.length;
+    $("#dialValue").textContent = options[i];
+  }, 420);
+  $("#stopTimer").onclick = () => {
+    clearInterval(timer);
+    state.timeline = $("#dialValue").textContent;
+    if (state.timeline === "ASAP" || state.timeline === "2 Weeks") { add("fullCreativeLaunch"); add("customLandingPage"); }
+    unlock();
+  };
+}
+
+function unlock() {
+  updateHud(8, "BLUEPRINT READY");
+  screen.innerHTML = `
+    <div class="scene">
+      <p class="kicker">Final Gate</p>
+      <h1 class="level-title">Unlock the launch kit</h1>
+      <p class="level-copy">Your recommendation is ready. Enter your info and ChurchBuilt will show your best-fit service, offer, and next move.</p>
+      <form class="form-grid" id="leadForm">
+        <div class="field"><label>Name</label><input name="name" required placeholder="Your name"></div>
+        <div class="field"><label>Email</label><input name="email" type="email" required placeholder="you@example.com"></div>
+        <div class="field"><label>Business / Organization</label><input name="organization" required placeholder="Brand name"></div>
+        <div class="field"><label>Website or Social</label><input name="website" placeholder="Optional"></div>
+        <div class="field"><label>Phone</label><input name="phone" placeholder="Optional"></div>
+        <div class="field full"><label>Project Notes</label><textarea name="notes" rows="4" placeholder="Tell me anything I should know..."></textarea></div>
+        <div class="field full"><button class="btn btn-primary" type="submit">Reveal My Launch Kit</button></div>
+      </form>
+    </div>
+  `;
+  $("#leadForm").onsubmit = submitLead;
+}
+
+async function submitLead(event) {
+  event.preventDefault();
+  state.lead = Object.fromEntries(new FormData(event.target).entries());
+  const top = getTop();
+  const r = results[top.key];
+  const payload = {
+    ...state.lead,
+    mission: state.mission,
+    startingPoint: state.startingPoint,
+    vibes: state.vibes,
+    problems: state.problems,
+    blocks: state.blocks,
+    tools: state.tools,
+    budget: state.budget,
+    timeline: state.timeline,
+    topRecommendation: r.title,
+    recommendedService: r.service,
+    unlockedOffer: r.offer,
+    scores: state.scores,
+    createdAt: new Date().toISOString()
+  };
+  const all = JSON.parse(localStorage.getItem("launchforge_leads") || "[]");
+  all.push(payload);
+  localStorage.setItem("launchforge_leads", JSON.stringify(all));
+  localStorage.setItem("launchforge_latest_lead", JSON.stringify(payload));
+  if (CONFIG.leadEndpoint) {
+    try { await fetch(CONFIG.leadEndpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); } catch (error) { console.warn(error); }
+  }
+  showResult(payload);
+}
+
+function getTop() {
+  const sorted = Object.entries(state.scores).sort((a, b) => b[1] - a[1]);
+  return { key: sorted[0][0], score: sorted[0][1], second: sorted[1]?.[0] };
+}
+
+function showResult(payload) {
+  const top = getTop();
+  const r = results[top.key];
+  const second = results[top.second] || results.fullCreativeLaunch;
+  updateHud(8, "LAUNCH KIT FORGED");
+  screen.innerHTML = `
+    <div class="scene">
+      <p class="kicker">Result Unlocked</p>
+      <h1 class="result-title">${safe(r.title)}</h1>
+      <p class="subtitle">${safe(r.copy)}</p>
+      <div class="result-layout">
+        <div class="result-card">
+          <div class="stat"><span>Best ChurchBuilt match</span><strong>${safe(r.service)}</strong></div>
+          <div class="stat"><span>Unlocked offer</span><strong>${safe(r.offer)}</strong></div>
+          <div class="stat"><span>Secondary fit</span><strong>${safe(second.title)}</strong></div>
+          <div class="stat"><span>Mission</span><strong>${safe(state.mission || "Not selected")}</strong></div>
+          <div class="stat"><span>Budget</span><strong>${safe(state.budget || "Not selected")}</strong></div>
+          <div class="stat"><span>Timeline</span><strong>${safe(state.timeline || "Not selected")}</strong></div>
+          <div class="button-row">
+            <a class="btn btn-primary" href="${CONFIG.calendlyUrl}" target="_blank" rel="noopener">Book My Free Discovery Call</a>
+            <button class="btn btn-dark" id="download" type="button">Download Result</button>
+          </div>
+        </div>
+        <aside class="result-card">
+          <h2 class="level-title" style="font-size:2.6rem">Intel</h2>
+          <p class="level-copy"><strong>Vibe:</strong> ${safe(state.vibes.slice(0, 7).join(", ") || "Not selected")}</p>
+          <p class="level-copy"><strong>Problems:</strong> ${safe(state.problems.join(", ") || "Not selected")}</p>
+          <p class="level-copy"><strong>Tools:</strong> ${safe(state.tools.join(", ") || "Not selected")}</p>
+          <div class="notice">ChurchBuilt is your creative launch partner for websites, branding, video, photos, custom music, QR promo, content, and ongoing support.</div>
+        </aside>
+      </div>
+    </div>
+  `;
+  $("#download").onclick = () => download(JSON.stringify(payload, null, 2), "launchforge-result.json", "application/json");
+}
+
+function download(content, filename, type) {
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(new Blob([content], { type }));
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+window.addEventListener("DOMContentLoaded", home);
